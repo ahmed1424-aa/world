@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خبير التصميم التعليمي الذكي | Instructional Design AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+        .chat-container::-webkit-scrollbar { width: 6px; }
+        .chat-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .chat-container::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 h-screen flex flex-col transition-colors duration-300">
+
+    <!-- شريط العلوى -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md">
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight">مصمم التعليم الذكي</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400">خبير معتمد في نظريات ونماذج التصميم التعليمي (ADDIE, SAM, Bloom)</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            <button onclick="openQrModal()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition" title="عرض الباركود ورابط التطبيق">
+                <i class="fa-solid fa-qrcode text-indigo-600 dark:text-indigo-400"></i>
+            </button>
+            <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition" title="تبديل الوضع الليلي">
+                <i id="darkModeIcon" class="fa-solid fa-moon text-slate-600 dark:text-slate-300"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- منطقة المحادثة -->
+    <main id="chatContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 chat-container max-w-4xl w-auto mx-auto w-full">
+        <!-- رسالة الترحيب -->
+        <div class="flex items-start space-x-3 space-x-reverse">
+            <div class="w-9 h-9 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-sm shadow">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm max-w-[85%] space-y-2">
+                <p class="font-semibold text-indigo-600 dark:text-indigo-400">مرحباً بك!</p>
+                <p class="text-sm leading-relaxed">أنا مساعدك الذكي المتخصص في <strong>التصميم التعليمي وتطوير المناهج</strong>. أستطيع مساعدتك في:</p>
+                <ul class="text-sm space-y-1 list-disc list-inside text-slate-600 dark:text-slate-300">
+                    <li>تطبيق نموذج ADDIE و SAM خطوة بخطوة.</li>
+                    <li>صياغة الأهداف التعليمية وفق تصنيف بلوم (Bloom's Taxonomy).</li>
+                    <li>تصميم سيناريوهات التعلم الإلكتروني (Storyboards) وخصائص المتعلمين.</li>
+                </ul>
+                <p class="text-xs text-slate-400 pt-1">اختر أحد الاختصارات أدناه أو اطرح سؤالك مباشرة:</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- اختصارات سريعة -->
+    <div class="max-w-4xl mx-auto px-4 w-full py-2 flex gap-2 overflow-x-auto no-scrollbar">
+        <button onclick="sendQuickPrompt('اشرح لي مراحل نموذج ADDIE باختصار')" class="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 px-3 py-1.5 rounded-full whitespace-nowrap transition shadow-sm">
+            📊 نموذج ADDIE
+        </button>
+        <button onclick="sendQuickPrompt('كيف أصوغ أهدافاً تعليمية قابلة للقياس باستخدام تصنيف بلوم؟')" class="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 px-3 py-1.5 rounded-full whitespace-nowrap transition shadow-sm">
+            🎯 أهداف تصنيف بلوم
+        </button>
+        <button onclick="sendQuickPrompt('ما هو نموذج SAM وما الفرق بينه وبين ADDIE؟')" class="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 px-3 py-1.5 rounded-full whitespace-nowrap transition shadow-sm">
+            🔄 مقارنة SAM و ADDIE
+        </button>
+        <button onclick="sendQuickPrompt('كيف أقوم بتحليل خصائص المتعلمين وسياق التعلم؟')" class="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 px-3 py-1.5 rounded-full whitespace-nowrap transition shadow-sm">
+            👥 تحليل المتعلمين
+        </button>
+    </div>
+
+    <!-- شريط الإدخال -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-4 shadow-lg">
+        <form id="chatForm" onsubmit="handleFormSubmit(event)" class="max-w-4xl mx-auto flex items-center space-x-2 space-x-reverse">
+            <input type="text" id="userInput" placeholder="اكتب استفسارك في التصميم التعليمي هنا..." class="flex-1 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl transition flex items-center justify-center shadow-md">
+                <i class="fa-solid fa-paper-plane text-sm"></i>
+            </button>
+        </form>
+    </footer>
+
+    <!-- نافذة منبثقة للباركود (QR Modal) -->
+    <div id="qrModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl border border-slate-200 dark:border-slate-700">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg">مشاركة التطبيق عبر QR Code</h3>
+                <button onclick="closeQrModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">امسح الكود أدناه بالهاتف المحمول لفتح روبوت التصميم التعليمي فوراً:</p>
+            <div id="qrcode" class="flex justify-center bg-white p-4 rounded-xl border border-slate-200 inline-block mx-auto"></div>
+            <div class="flex items-center space-x-2 space-x-reverse bg-slate-100 dark:bg-slate-700 p-2 rounded-xl">
+                <input type="text" id="currentUrl" readonly class="bg-transparent text-xs flex-1 text-slate-600 dark:text-slate-300 px-2 outline-none">
+                <button onclick="copyUrl()" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-indigo-700 transition">نسخ الرابط</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- كود الجافاسكريبت المدمج -->
+    <script>
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+
+        // الوضع الليلي
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('darkModeIcon').className = isDark ? "fa-solid fa-sun text-amber-400" : "fa-solid fa-moon text-slate-600";
+        }
+
+        // إرسال سؤال سريع
+        function sendQuickPrompt(text) {
+            userInput.value = text;
+            handleFormSubmit(new Event('submit'));
+        }
+
+        // معالجة المحادثة والذكاء الاستباقي
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if(!text) return;
+
+            // إضافة رسالة المستخدم
+            appendMessage(text, 'user');
+            userInput.value = '';
+
+            // مؤشر الكتابة
+            const loadingId = showLoading();
+
+            setTimeout(() => {
+                removeLoading(loadingId);
+                const reply = generateInstructionalDesignReply(text);
+                appendMessage(reply, 'bot');
+            }, 800);
+        }
+
+        function appendMessage(text, sender) {
+            const isUser = sender === 'user';
+            const html = `
+                <div class="flex items-start space-x-3 space-x-reverse ${isUser ? 'flex-row-reverse space-x-reverse' : ''}">
+                    <div class="w-9 h-9 rounded-full ${isUser ? 'bg-slate-700 dark:bg-slate-600' : 'bg-indigo-600'} flex-shrink-0 flex items-center justify-center text-white text-sm shadow">
+                        <i class="fa-solid ${isUser ? 'fa-user' : 'fa-robot'}"></i>
+                    </div>
+                    <div class="${isUser ? 'bg-indigo-600 text-white rounded-2xl rounded-tl-none' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tr-none'} p-4 shadow-sm max-w-[85%] text-sm leading-relaxed space-y-2">
+                        <div class="whitespace-pre-line">${escapeHtml(text)}</div>
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', html);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showLoading() {
+            const id = 'loading_' + Date.now();
+            const html = `
+                <div id="${id}" class="flex items-start space-x-3 space-x-reverse">
+                    <div class="w-9 h-9 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-sm shadow">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm text-sm">
+                        <div class="flex items-center space-x-2 space-x-reverse text-slate-400">
+                            <div class="w-2 h-2 rounded-full bg-indigo-600 animate-bounce"></div>
+                            <div class="w-2 h-2 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.2s]"></div>
+                            <div class="w-2 h-2 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.4s]"></div>
+                            <span class="text-xs mr-2">جاري استشارة قواعد التصميم التعليمي...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', html);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return id;
+        }
+
+        function removeLoading(id) {
+            const el = document.getElementById(id);
+            if(el) el.remove();
+        }
+
+        function escapeHtml(string) {
+            return string.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        } // محرك الردود التعليمية المتخصص
+
+        function generateInstructionalDesignReply(query) {
+            query = query.toLowerCase();
+            if(query.includes('addie') || query.includes('نموذج addie')) {
+                return "📌 نموذج ADDIE يعد الإطار الكلاسيكي الأشهر في التصميم التعليمي ويتكون من 5 مراحل رئيسية:\n\n1. التحليل (Analysis): دراسة المتعلمين، الأهداف، والاحتياجات.\n2. التصميم (Design): تحديد استراتيجيات التعلم، القياس، والمخطط التفصيلي (Storyboard).\n3. التطوير (Development): إنتاج وإنشاء المحتوى والوسائط التعليمية.\n4. التنفيذ (Implementation): تقديم المحتوى للمتعلمين في بيئة التعلم.\n5. التقويم (Evaluation): قياس فعالية البرنامج وتحسينه مستمراً.";
+            } else if(query.includes('بلوم') || query.includes('bloom') || query.includes('أهداف')) {
+                return "🎯 صياغة الأهداف وفق تصنيف بلوم (المعدل):\n\nتعتمد الصياغة المعيارية على صيغة: [أن يكون المتعلم قادراً على + فعل سلوكي قابل للقياس + موضوع المحتوى + معيار الأداء].\n\nأمثلة للأفعال حسب المستويات:\n• التذكر: يذكر، يعرّف، يحدد.\n• الفهم: يفسر، يشرح، يترجم.\n• التطبيق: يطبق، يحسب، ينفذ.\n• التحليل: يحلل، يقارن، يُميّز.\n• التقييم: يُقيم، ينقد، يحكم على.\n• الإبداع: يبتكر، يصمم، يؤلف.";
+            } else if(query.includes('sam')) {
+                return "🔄 نموذج التعلم الرشيق (SAM):\n\nهو نموذج مرن وسريع يعتمد على النماذج الأولية والتطوير التكراري (Iterative) على عكس ADDIE الخطي. يتكون من مرحلتين رئيسيتين:\n1. التحضير والإعداد (Preparation).\n2. مرحلة التصميم والتطوير المتكرر (Iterative Design & Iterative Development).\n\nالمميز فيه أنه يسمح بالتعديل المستمر وسرعة إنجاز الدورات التدريبية مقارنة بـ ADDIE.";
+            } else if(query.includes('متعلم') || query.includes('تحليل')) {
+                return "👥 تحليل المتعلمين (Audience Analysis):\n\nعند تصميم أي محتوى تعليمي يجب دراسة الجوانب التالية:\n• الخصائص الديموغرافية: العمر، المستوى التعليمي، الخلفية المهنية.\n• المعرفة القبلية: ما الذي يعرفه المتعلمون مسبقاً عن الموضوع؟\n• الدوافع والاحتياجات: لماذا يدرسون هذا المحتوى وما هي توقعاتهم؟\n• البيئة التقنية: توفر الأجهزة والإنترنت (خاصة في التعلم الإلكتورني).";
+            } else {
+                return `مرحباً بك! بصفتي خبيراً في التصميم التعليمي، أستطيع مساعدتك في بناء الحقائب التدريبية، وتطوير السيناريوهات التعليمية، واختيار نظريات التعلم المناسبة (مثل السلوكية، المعرفية، والبنائية).\n\nسؤالك "${query}" مهم جداً؛ هل ترغب في أن أقوم بتطبيق خطوات تحليل الاحتياجات أو صياغة اختبارات مقننة لهذا الموضوع؟`;
+            }
+        }
+
+        // إداراة الباركود
+        function openQrModal() {
+            const modal = document.getElementById('qrModal');
+            const urlInput = document.getElementById('currentUrl');
+            const qrcodeDiv = document.getElementById('qrcode');
+            
+            const currentUrl = window.location.href;
+            urlInput.value = currentUrl;
+            
+            qrcodeDiv.innerHTML = "";
+            try {
+                const qr = qrcode(0, 'H');
+                qr.addData(currentUrl);
+                qr.make();
+                qrcodeDiv.innerHTML = qr.createImgTag(5);
+            } catch(e) {
+                qrcodeDiv.innerHTML = "<p class='text-xs text-red-500'>عذراً، تعذر توليد الباركود محلياً</p>";
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeQrModal() {
+            const modal = document.getElementById('qrModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function copyUrl() {
+            const urlInput = document.getElementById('currentUrl');
+            urlInput.select();
+            document.execCommand('copy');
+            alert('تم نسخ الرابط بنجاح!');
+        }
+    </script>
+</body>
+</html>
